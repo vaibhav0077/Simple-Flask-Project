@@ -21,7 +21,7 @@ def index():
             return redirect(url_for('main.index'))
         else:
             flash('Task text cannot be empty.', 'danger')
-            return redirect(url_for('main.add_task'))
+            return redirect(url_for('main.index'))
     else:
         user = User.query.filter_by(id=current_user.id)
         return render_template('index.html', tasks=user[0].todos)

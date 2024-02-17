@@ -50,6 +50,11 @@ def signup_post():
     name = request.form.get('name')
     password = request.form.get('password')
 
+    # if a user is found, we want to redirect back to signup page so user can try again
+    if not (email and name and password):
+        flash('All fields are required.')
+        return redirect(url_for('auth.signup'))
+
     # if this returns a user, then the email already exists in database
     user = User.query.filter_by(email=email).first()
 
