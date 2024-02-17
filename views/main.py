@@ -7,21 +7,9 @@ from ..models import User, Todo
 main = Blueprint('main', __name__)
 
 
-@main.route('/')
+@main.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template('index.html')
-
-
-@main.route('/profile')
-@login_required
-def profile():
-    return render_template('profile.html', name=current_user.name)
-
-
-@main.route('/task', methods=['GET', 'POST'])
-@login_required
-def task():
     if request.method == 'POST':
         task_text = request.form.get('task_text')
         if task_text:
@@ -30,13 +18,19 @@ def task():
             db.session.add(new_task)
             db.session.commit()
             flash('Task added successfully.', 'success')
-            return redirect(url_for('main.task'))
+            return redirect(url_for('main.index'))
         else:
             flash('Task text cannot be empty.', 'danger')
             return redirect(url_for('main.add_task'))
     else:
         user = User.query.filter_by(id=current_user.id)
-        return render_template('tasks.html', tasks=user[0].todos)
+        return render_template('index.html', tasks=user[0].todos)
+
+
+@main.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html', name=current_user.name)
 
 
 @main.route('/task/edit/<int:todo_id>', methods=['GET', 'POST'])
@@ -48,7 +42,7 @@ def edit_task(todo_id):
         todo.text = request.form.get('task_text')
         db.session.commit()
         flash('Task updated successfully.', 'success')
-        return redirect(url_for('main.task'))
+        return redirect(url_for('main.index'))
 
     return render_template('edit_task.html', todo=todo)
 
@@ -66,4 +60,4 @@ def delete_task(todo_id):
             flash('You are not authorized to delete this todo.', 'danger')
     else:
         flash('Todo not found.', 'danger')
-    return redirect(url_for('main.task'))
+    return redirect(url_for('main.index'))
