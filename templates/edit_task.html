@@ -1,0 +1,22 @@
+{% extends "base.html" %} {% block content %} {% with messages =
+get_flashed_messages() %} {% if messages %}
+<div class="notification is-danger">{{ messages[0] }}</div>
+{% endif %} {% endwith %}
+<h1 class="title">Add Task</h1>
+
+<form action="{{ url_for('main.edit_task', todo_id=todo.id) }}" method="post">
+  <div class="form-group">
+    <label for="task-text">Task:</label>
+    <input
+      type="text"
+      class="form-control"
+      id="task-text"
+      name="task_text"
+      placeholder="Enter task"
+      value="{{ todo.text }}"
+    />
+  </div>
+  <button type="submit" class="btn btn-primary">Edit Task</button>
+</form>
+
+{% endblock %}
